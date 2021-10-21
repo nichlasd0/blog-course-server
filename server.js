@@ -2,6 +2,7 @@
 const express = require("express");
 const cors = require("cors");
 const sql = require("./sql");
+const bodyParser = require("body-parser");
 
 const app = express();
 
@@ -10,6 +11,8 @@ var corsOptions = {
 }
 
 app.use(cors(corsOptions));
+
+app.use(bodyParser.json());
 
 app.listen(8000, () => {
     console.log("Server is started and listening");
