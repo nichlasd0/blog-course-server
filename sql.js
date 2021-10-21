@@ -1,3 +1,4 @@
+const { defaultOptions } = require("mariadb");
 const Sequelize = require("sequelize");
 
 const sequelize = new Sequelize("blogcourse", "root", "123456",
@@ -13,7 +14,9 @@ const Article = sequelize.define('article', {
     date: { type: Sequelize.DATE },
     content: { type: Sequelize.TEXT },
     description: { type: Sequelize.TEXT },
-    imageUrl: { type: Sequelize.STRING },
+    imageUrl: { type: Sequelize.STRING }, 
+    viewCount: { type: Sequelize.INTEGER },
+    published: { type: Sequelize.BOOLEAN },
 });
 
 
@@ -35,7 +38,8 @@ init = function() {
             description: 'This is my first article',
             key: 'my-first-article',
             date: new Date(),
-            imageUrl: 'https://angular.io/assets/images/logos/angular/angular.png'
+            imageUrl: 'https://angular.io/assets/images/logos/angular/angular.png',
+            published: true
         });
         Article.create({
             title: 'My second article',
@@ -43,9 +47,35 @@ init = function() {
             description: 'This is my second article',
             key: 'my-second-article',
             date: new Date(),
-            imageUrl: 'https://angular.io/assets/images/logos/angular/angular_solidBlack.png'
+            imageUrl: 'https://angular.io/assets/images/logos/angular/angular_solidBlack.png',
+            published: false
         })
     });
 };
 
+getArticles = function(callback) {
+    Article.findAll({ order: sequelize.literal("date DESC"), where: { published: true } })
+    .then(articles => callback(articles));
+};
+
+getArticleByKey = function(options, callback) {
+    Article.findOne({ where: { key : options.key, published: true } })
+    .then(article => {
+        if (article != null){
+            article.update({
+                viewCount: ++article.viewCount
+            })
+        } 
+        callback(article);
+        });
+};
+
+getDashboardArticles = function(callback) {
+    Article.findAll({order: sequelize.literal("date DESC")})
+    .then(articles => callback(articles));
+};
+
 module.exports.init = init;
+module.exports.getArticles = getArticles;
+module.exports.getArticleByKey = getArticleByKey;
+module.exports.getDashboardArticles = getDashboardArticles;

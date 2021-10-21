@@ -21,4 +21,5 @@ app.get("/", function(requset, response){
     response.send("Hello Node.js! ");
 });
 
-require("./articles.js")(app);
+require("./articles.js")(app, sql);
+require("./dashboard.js")(app, sql);
