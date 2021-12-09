@@ -26,3 +26,4 @@ app.get("/", function(requset, response){
 
 require("./articles.js")(app, sql);
 require("./dashboard.js")(app, sql);
+require("./auth.js")(app, sql);
